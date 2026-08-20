@@ -1,11 +1,15 @@
+import os
 import urllib.request
 import urllib.parse
 import json
 import shopify
+from dotenv import load_dotenv
 
-SHOP_URL = "ibizabeautystore.myshopify.com"
-CLIENT_ID = "08031bb7d24cf43edce8da86b8a41e34"
-CLIENT_SECRET = "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"
+load_dotenv()
+
+SHOP_URL = os.getenv("SHOP_URL")
+CLIENT_ID = os.getenv("SHOPIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET")
 API_VERSION = "2026-07"
 
 token_url = f"https://{SHOP_URL}/admin/oauth/access_token"
