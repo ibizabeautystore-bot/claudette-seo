@@ -1,0 +1,34 @@
+name: Refresh SEO dashboard
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: python scripts/refresh_dashboard.py
+        env:
+          SHOP_URL: ${{ secrets.SHOP_URL }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+
+      - run: |
+          git config user.name "claudette-bot"
+          git config user.emai
+          git add docs/index.html
+          git diff --cached --ily SEO audit refresh"
+          git push
