@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claudette SEO Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef1ed;
+    --surface: #f8faf7;
+    --surface-raised: #ffffff;
+    --border: #d7ddd3;
+    --ink: #1b2420;
+    --ink-soft: #52604f;
+    --accent: #1f6f63;
+    --accent-soft: #e2eeea;
+    --ok: #3f7d4f;
+    --ok-soft: #e5f0e3;
+    --warn: #a4631f;
+    --warn-soft: #faeee0;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --display: "Fraunces", Georgia, serif;
+    --body-font: "Work Sans", -apple-system, system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11160f; --surface: #171e16; --surface-raised: #1d251c; --border: #2b342a;
+      --ink: #eceee8; --ink-soft: #a9b3a4; --accent: #6fcdb8; --accent-soft: #1d2f2b;
+      --ok: #7cc98c; --ok-soft: #1d2a1f; --warn: #e3a35c; --warn-soft: #302417;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11160f; --surface: #171e16; --surface-raised: #1d251c; --border: #2b342a;
+    --ink: #eceee8; --ink-soft: #a9b3a4; --accent: #6fcdb8; --accent-soft: #1d2f2b;
+    --ok: #7cc98c; --ok-soft: #1d2a1f; --warn: #e3a35c; --warn-soft: #302417;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--body-font);
+    font-size: 15px; line-height: 1.5; padding: clamp(20px, 5vw, 56px); min-height: 100vh;
+  }
+  @media (prefers-reduced-motion: no-preference) { .row { transition: background-color 120ms ease; } }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  .brand { font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: -0.01em; text-wrap: balance; }
+  .brand span { color: var(--accent); }
+  .meta { font-size: 13px; color: var(--ink-soft); text-align: right; }
+  .meta .shop { font-weight: 500; color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 36px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .stat .num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 30px; font-weight: 500; line-height: 1; }
+  .stat.ok .num { color: var(--ok); }
+  .stat.warn .num { color: var(--warn); }
+  .stat .label { margin-top: 6px; font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+  section { margin-bottom: 32px; }
+  h2 { font-family: var(--body-font); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); margin: 0 0 12px; }
+  ul.rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .row { background: var(--surface-raised); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .row-main { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.warn { background: var(--warn); }
+  .row-title { font-weight: 500; }
+  .issue-list { list-style: none; margin: 8px 0 0 18px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .issue { font-size: 13px; color: var(--warn); background: var(--warn-soft); display: inline-block; padding: 2px 8px; border-radius: 6px; width: fit-content; }
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  summary { padding: 14px 16px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary .dot { background: var(--ok); }
+  summary:focus-visible, .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .clean-list { margin: 0; padding: 4px 16px 16px 44px; columns: 2; column-gap: 24px; font-size: 13.5px; color: var(--ink-soft); }
+  .clean-list li { margin-bottom: 4px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-soft); }
+  footer code { font-family: var(--mono); background: var(--surface); padding: 2px 6px; border-radius: 4px; }
+  @media (max-width: 520px) { .stats { grid-template-columns: 1fr; } .clean-list { columns: 1; } .meta { text-align: left; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Claudette <span>SEO AIO</span></div>
+    <div class="meta">
+      <div class="shop">ibizabeautystore.myshopify.com</div>
+      <div>Audited 13 Oct 2026, 17:54 UTC</div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="num">113</div><div class="label">Products audited</div></div>
+    <div class="stat ok"><div class="num">94</div><div class="label">SEO-clean</div></div>
+    <div class="stat warn"><div class="num">19</div><div class="label">Need fixes</div></div>
+  </div>
+
+  <section>
+    <h2>Needs attention (19)</h2>
+    <ul class="rows">
+      
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Colour® Peptide Pout Fuller-looking lips</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Missing meta title</li><li class="issue">Meta description too long (343 chars)</li><li class="issue">6 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin Sunright® Solar Screen Mineral Face Sunscreen Broad Spectrum SPF 50+</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Meta title too long (77 chars)</li><li class="issue">Meta description too long (314 chars)</li><li class="issue">4 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nutricentials Day Dream Protective Lotion or Cream SPF35</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Meta title too long (63 chars)</li><li class="issue">Meta description too long (219 chars)</li><li class="issue">5 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Epoch Polishing Bar: Glacial Marine Mud Soap-Free Cleanser for Smooth Skin</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Meta title too long (64 chars)</li><li class="issue">4 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin Liquid Collagen+ (Strawberry or Peach) Anti-aging Collagen Supplement</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Missing meta title</li><li class="issue">9 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nutricentials® Bioadaptive Skin Care™ Celltrex Always Right Recovery Mask</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Missing meta title</li><li class="issue">8 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">ageLOC Galvanic Spa Facial Gels – Pre-Treat &amp; Treatment System</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">ageLOC Tru Face Uplifting Rich Cream + Refill Bundle – Buy One, Get Your Refill at 50% Off</span>
+      </div>
+      <ul class="issue-list"><li class="issue">Meta title too long (74 chars)</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">ageLOC® Youth / ageLOC® Y-Span®</span>
+      </div>
+      <ul class="issue-list"><li class="issue">5 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC  - WellSpa iO – Smart Body Device for Smoother-Looking Skin</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC Body Shaping Gel</span>
+      </div>
+      <ul class="issue-list"><li class="issue">6 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC Body Shaping Gel + Dermatic Effects Kit</span>
+      </div>
+      <ul class="issue-list"><li class="issue">6 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC RenuSpa iO – Smart Body Device for Smoother-Looking Skin</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC TRME InnerNu – Digestion &amp; Detox Support</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin ageLOC TRME SmartWin – Cravings &amp; Appetite Support for Body Balance | Vegan &amp; Gluten-Free</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin Clay Pack Deep Cleansing Masque</span>
+      </div>
+      <ul class="issue-list"><li class="issue">7 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin LumiSpa Rose Gold Beauty Device + Collagen+ Bundle</span>
+      </div>
+      <ul class="issue-list"><li class="issue">2 images missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin TRME System Kit– Vegan Weight Management System with M-Bars</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <span class="dot warn" aria-hidden="true"></span>
+        <span class="row-title">Nu Skin TRME Weight Management Kit - Vegan Gluten-Free Supplement</span>
+      </div>
+      <ul class="issue-list"><li class="issue">1 image missing alt text</li></ul>
+    </li>
+    </ul>
+  </section>
+
+  <section>
+    <details>
+      <summary><span class="dot" aria-hidden="true"></span> Clean catalog (94 products, no action needed)</summary>
+      <ul class="clean-list">
+        <li>180º Vitamin C Face Wash Cleanser</li><li>ageLOC Boost Brightening Serum</li><li>ageLOC Boost – Nu Skin&#x27;s Microcurrent Anti-Aging Device</li><li>AgeLOC Dermatic Effects Trio</li><li>ageLOC Galvanic Face Spa</li><li>ageLOC LumiSpa Activating Face Cleanser Charcoal</li><li>ageLOC LumiSpa Blemish Serum</li><li>ageLOC LumiSpa iO Rose Gold Accent + IdealEyes Kit</li><li>ageLOC Meta Metabolic Health Supplement with Anthocyanins from Purple Berries &amp; Black Rice</li><li>ageLOC Nutriol Intensive Scalp &amp; Hair Serum</li><li>ageLOC Nutriol Scalp &amp; Hair Conditioner</li><li>ageLOC Nutriol Scalp &amp; Hair Shampoo: Revitalize Thin &amp; Aging Hair</li><li>ageLOC Tru Face Essence Ultra</li><li>ageLOC Tru Face Future Serum</li><li>ageLOC Tru Face Ideal Eyes</li><li>ageLOC Tru Face Peptide Retinol Complex</li><li>ageLOC Tru Face Peptide Retinol Complex + Uplifting Cream Bundle</li><li>ageLOC Tru Face Radiant Day SPF22</li><li>ageLOC Tru Face Refining Toner</li><li>ageLOC Tru Face Transforming Gel Cream</li><li>ageLOC Tru Face Uplifting Rich Cream – Firming &amp; Contouring Hydration</li><li>AgeLOC TruFace Line Corrector</li><li>AP 24 Whitening Fluoride Toothpaste | Brightening Vanilla Mint Formula</li><li>Beauty Focus Collagen+ &amp; ageLOC LumiSpa Activating Face Cleanser</li><li>Epoch Glacial Marine Mud Mask</li><li>GloPRO Microneedling Tool + ageLOC® Tru Face® Line Corrector Bundle</li><li>JVi Fruit &amp; Vegetable Drink - 12 ingredients with Vitamin C</li><li>LifePak® Nano</li><li>Mens  Lightweight Facial Moisturizer</li><li>Nu Colour Curling Mascara - Black</li><li>Nu Colour Lash + Brow Serum</li><li>Nu Skin 180º AHA Facial Peel and Neutraliser</li><li>Nu Skin ageLOC Body Activating Gel – Restore &amp; Relax Gel for WellSpa iO &amp; RenuSpa iO</li><li>Nu Skin ageLOC Dermatic Effects Serum</li><li>Nu Skin ageLOC Dermatic Effects | Anti-Cellulite &amp; Skin Firming Lotion</li><li>Nu Skin ageLOC LumiSpa Activating Cleanser – Face Cleanser for LumiSpa iO</li><li>Nu Skin ageLOC LumiSpa iO &amp; Accent Head: The Glow Bundle</li><li>Nu Skin ageLOC LumiSpa iO Replacement Head – Hygienic Cleansing Head for LumiSpa iO</li><li>Nu Skin ageLOC LumiSpa iO – Smart Facial Cleansing Device for Visibly Better Skin in 2 Minutes</li><li>Nu Skin ageLOC Transforming Night</li><li>Nu Skin AgeLOC TRME M-Bars Chocolate Certified Vegan and Gluten-Free</li><li>Nu Skin AgeLOC TRME REALMe - Vegan Gluten-Free Dietary Supplement</li><li>Nu Skin Beauty Focus Collagen Plus &amp; Retinol Saver Kit</li><li>Nu Skin Beauty Focus Collagen Plus: Bioactive Peptide Beauty Supplement</li><li>Nu Skin Beauty Focus Collagen+ – Clinically Proven Collagen Supplement for USA, Canada &amp; Australia</li><li>Nu Skin Beauty Focus MultiBeauty 30 capsules for skin, hair and nails</li><li>Nu Skin Celltrex Always Right Recovery Fluid</li><li>Nu Skin Collagen and Nu Biome Bundle</li><li>Nu Skin Conductive Gel | Essential Facial Spa Treatment Gel</li><li>Nu Skin Epoch Baobab Body Butter</li><li>Nu Skin Lumispa IO  + TruFace Essence Ultra Kit</li><li>Nu Skin Men’s Skincare Line Bundle: The Ultimate ageLOC® Daily Regimen</li><li>Nu Skin MYND360 Mind Full – Clinically Proven Brain Health &amp; Memory Support Supplement</li><li>Nu Skin MYND360 Night Time | Sleep &amp; Cognitive Recovery (USA &amp; Canada)</li><li>Nu Skin MYND360™ Feel Calm USA &amp; CANADA</li><li>Nu Skin MYND360™ Sharp Focus  USA &amp; CANADA</li><li>Nu Skin MYND360™ Supplement Bundle + Free Nu Biome Caffeine-Free</li><li>Nu Skin Nu Color Cleansing Balm</li><li>Nu Skin Nu Color Lip Mask - Plant Based Lip Balm</li><li>Nu Skin Nu Experience Kit Saver Bundle</li><li>Nu Skin Nutricentials Dew All Day Moisture Restore Cream</li><li>Nu Skin Nutricentials Here You Glow Toner</li><li>Nu Skin Nutricentials In Balance pH Balance Toner</li><li>Nu Skin Nutricentials Pillow Glow – Hydrating Sleeping Mask for All Skin Types</li><li>Nu Skin Nutricentials Pumps Bakuchiol</li><li>Nu Skin Nutricentials Pumps Ceramides + Postbiotics</li><li>Nu Skin Nutricentials Pumps Hyaluronic Acid + B5</li><li>Nu Skin Nutricentials Thirst Fix Hydrating Gel Cream</li><li>Nu Skin Nutricentials Vitamin C Collagen Pump Serum</li><li>Nu Skin Pharmanex Colostrum Defense</li><li>Nu Skin Pharmanex LifePak elements</li><li>Nu Skin Pharmanex MarineOmega – Omega-3 Fish &amp; Krill Oil Supplement</li><li>Nu Skin Pharmanex Nu Biome</li><li>Nu Skin Pharmanex Optimum Omega Supplement With EPA &amp; DHA Fish Oil</li><li>Nu Skin Pharmanex Tēgreen (120 Capsules)</li><li>Nu Skin Pharmanex Tēgreen 97®</li><li>Nu Skin Radiant Ritual Kit</li><li>Nu Skin Renu Hair Mask</li><li>Nu Skin Sunright Insta Glow – The Self Tanner That Actually Cares for Your Skin</li><li>Nu Skin TRME MyEdge – Cravings &amp; Appetite Support for Body Balance | Vegan &amp; Gluten-Free</li><li>Nu Skin TRME MyGoal – Vegan Glucomannan for Weight Management</li><li>Nu Skin TRMe™ GO PreWorkout+ USA</li><li>Nutricentals Kit</li><li>Nutricentials Eye Love Bright Eyes Illuminating Eye Cream</li><li>Nutricentials Hydration Kit – Complete Bioadaptive Skin Care Set for Intense Moisture &amp; Balance</li><li>Nutricentials Moisturize Me | Intense Hydrating Face Cream</li><li>Nutricentials To Be Clear Pure Cleansing Gel</li><li>Pharmanex LifePak+: Comprehensive Daily Multivitamin with 13 Vitamins &amp; 9 Minerals for Total Body Support</li><li>Pharmanex M-Smart | Blood Glucose &amp; Healthy Digestion Supplement</li><li>Pharmanex Nu Biome® Coconut Pineapple Caffeine Free</li><li>Pharmanex NuEase - Plant-Based Digestion Aid</li><li>PRYSM iO Personalized Wellness Device: Instant Nutrition Analysis &amp; Supplement Recommendations</li><li>Sunright 50</li><li>TRMe GO Protein+ Premium Whey Protein Shake – Clean, Keto-Friendly Workout Recovery</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer>
+    Connected live to the Shopify Admin API via <code>ibizabeautystore.myshopify.com</code>. Checks meta titles, meta descriptions, and image alt text on every product.
+  </footer>
+</div>
+</body>
+</html>
